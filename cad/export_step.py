@@ -5,6 +5,15 @@ def solid(p):
     w,h,d=(float(p[k]) for k in ('w','h','d'))
     if not all(0<v<=100000 for v in (w,h,d)):
         raise ValueError('Invalid dimensions')
+    if p['kind']=='bend':
+        r=float(p['radius'])
+        a=math.radians(float(p['bendAngle']))
+        if not 0<r<=100000 or not 0<a<=math.pi: raise ValueError('Invalid bend')
+        # Browser XY maps to kernel XZ; extrusion maps to negative Y.
+        def pt(rad,theta): return (rad*math.cos(theta),rad*math.sin(theta))
+        return (cq.Workplane('XZ').moveTo(r,0).threePointArc(pt(r,a/2),pt(r,a))
+                .lineTo(*pt(r+h,a)).threePointArc(pt(r+h,a/2),pt(r+h,0))
+                .close().extrude(d).translate((0,d/2,0)))
     if p['kind']=='box':
         return cq.Workplane('XY').box(w,d,h)
     if p['kind']=='cylinder':
