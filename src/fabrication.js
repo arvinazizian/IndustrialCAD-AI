@@ -1,0 +1,3 @@
+export function tube(w,h,d,t){if(![w,h,d,t].every(v=>Number.isFinite(v)&&v>0)||2*t>=Math.min(w,d))throw Error('Invalid tube thickness');return {kind:'box',w,h,d,cut:{kind:'box',w:w-2*t,h:h+2,d:d-2*t,x:0,y:0,z:0}}}
+export function bendAllowance(radius,thickness,angle,k=.4){if(![radius,thickness,angle,k].every(Number.isFinite)||radius<=0||thickness<=0||angle<=0||angle>180||k<0||k>1)throw Error('Invalid bend');return angle*Math.PI/180*(radius+k*thickness)}
+export function surfaceHole(part,point,normal,diameter){if(![...point,...normal,diameter].every(Number.isFinite)||diameter<=0||Math.abs(normal[1])<.999)throw Error('Select a horizontal face');return {kind:'cylinder',w:diameter,d:diameter,h:part.h+2,x:point[0],y:0,z:point[2]}}
