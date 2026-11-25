@@ -1,4 +1,4 @@
-import json, sys
+import json, sys, math
 import cadquery as cq
 
 def solid(p):
@@ -17,7 +17,18 @@ def xyz(p):
 def build(p):
     s=solid(p)
     for cut in p['cuts']:
-        s=s.cut(solid(cut).translate(xyz(cut)))
+        tool=solid(cut)
+        if 'axis' in cut:
+            x,y,z=map(float,cut['axis'])
+            n=math.sqrt(x*x+y*y+z*z)
+            if not n: raise ValueError('Invalid axis')
+            x,y,z=x/n,y/n,z/n
+            angle=math.degrees(math.acos(max(-1,min(1,y))))
+            if abs(x)+abs(z)>1e-10:
+                tool=tool.rotate((0,0,0),(z,x,0),angle)
+            elif y<0:
+                tool=tool.rotate((0,0,0),(1,0,0),180)
+        s=s.cut(tool.translate(xyz(cut)))
     if not s.val().isValid() or s.val().Volume()<=0:
         raise ValueError('Invalid solid')
     return s.rotate((0,0,0),(0,0,1),p['angle']).translate(xyz(p))
