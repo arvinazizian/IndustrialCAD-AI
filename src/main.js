@@ -1,3 +1,4 @@
+import {vacuumDemo} from './vacuum-demo.js';
 import {generateAssembly,materials,standardParts} from './general.js';
 import {liveBOM,nest,estimate} from './production.js';
 import {machineDesign} from './machine.js';
@@ -71,4 +72,6 @@ const toolbar=document.createElement('div');toolbar.className='cad-view-toolbar'
 
 $('runDemo').onclick=()=>safe(()=>{const q=generateAssembly({parts:[{name:'Table top',kind:'box',w:1200,h:30,d:600,y:800,material:'steel'},...[-1,1].flatMap(x=>[-1,1].map(z=>({name:'Leg',kind:'box',w:50,h:785,d:50,x:x*550,y:392.5,z:z*250,material:'steel'})))]});$('generalSpec').value=JSON.stringify(q,null,2);showProposal(q)});
 
-$('quickRun').onclick=()=>{general.open=true;$('generalPrompt').scrollIntoView({block:'center'});if($('generalPrompt').value.trim())$('generalAsk').click();else $('generalPrompt').focus()};$('quickDemo').onclick=()=>$('runDemo').click();$('sampleVacuum').onclick=()=>safe(()=>{const q=machineDesign({w:1500,d:850,h:1000,t:2});const spec={parts:q.parts};$('generalSpec').value=JSON.stringify(generateAssembly(spec),null,2);showProposal(spec)});
+$('quickRun').onclick=()=>{general.open=true;$('generalPrompt').scrollIntoView({block:'center'});if($('generalPrompt').value.trim())$('generalAsk').click();else $('generalPrompt').focus()};$('quickDemo').onclick=()=>$('runDemo').click();$('sampleVacuum').onclick=()=>safe(()=>{const spec=vacuumDemo();$('generalSpec').value=JSON.stringify(generateAssembly(spec),null,2);showProposal(spec)});
+
+const fullDemo=document.createElement('button');fullDemo.textContent='اجرای نمونه کامل وکیوم';toolbar.append(fullDemo);fullDemo.onclick=()=>$('sampleVacuum').click();
